@@ -86,7 +86,7 @@ void print_array_hex(uint8_t* array) {
 *@return file descriptor
  **/
 int open_file(char* filename) {
-    int fd = open(filename, O_RDWR);
+    int fd = open(filename, O_RDWR | O_APPEND);
     if(fd == STATUS_ERROR) {
         close(fd);
         printf("Error during file opening.\n");
