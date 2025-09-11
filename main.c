@@ -2,7 +2,6 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
-#include <fcntl.h>
 #include <fcntl.h>       // open()
 #include <unistd.h>      // read(), write(), close()
 #include <sys/types.h>   // types used in syscalls
@@ -10,6 +9,8 @@
 
 #define STATUS_SUCCESS 0
 #define STATUS_ERROR -1
+#define BYTE_AMOUNT_TO_READ 1
+#define MAX_ARRAY_SIZE 256
 
 // Forward declarations
 void create_cyphertext(uint8_t* array, char* filename_input, char* filename_output);
@@ -18,20 +19,21 @@ void populate_array();
 void print_array_hex();
 // file operations
 int open_file(char* filename); 
-int write_to_file(int fd, char* byte_to_write);
+int write_byte_to_file(int fd, char* byte_to_write);
+int read_byte_from_file(int fd);
 int close_file(int fd);
 
 
 int main() {
     char* test_key = "Key"; uint8_t key_length = strlen(test_key);
     char* filename_input = "input.txt"; char* filename_output = "output.txt"; char testbyte = 'A'; char* testbyte_ptr = &testbyte;
-    uint8_t S[256];
+    uint8_t S[MAX_ARRAY_SIZE];
     populate_array(S);
     swap_elements(S,test_key,key_length);
 
     // test file operations
     int inputfile_fd = open_file(filename_input);
-    write_to_file(inputfile_fd, testbyte_ptr);
+    write_byte_to_file(inputfile_fd, testbyte_ptr);
     close_file(inputfile_fd);
 
     return STATUS_SUCCESS;
@@ -55,8 +57,8 @@ void create_cyphertext(uint8_t* array, char* filename_input, char* filename_outp
  **/
 void swap_elements(uint8_t* array, char* key, uint8_t key_length) {
     uint8_t j = 0;
-    for(int i = 0; i < 256; i++) {
-        j = (j + array[i] + key[i%key_length]) % 256;
+    for(int i = 0; i < MAX_ARRAY_SIZE; i++) {
+        j = (j + array[i] + key[i%key_length]) % MAX_ARRAY_SIZE;
         uint8_t temp = array[i];
         array[i] = array[j];
         array[j] = temp;
@@ -69,13 +71,13 @@ void swap_elements(uint8_t* array, char* key, uint8_t key_length) {
 *@return none
  **/
 void populate_array(uint8_t* array) {
-    for(int i = 0; i < 256; i++) {
+    for(int i = 0; i < MAX_ARRAY_SIZE; i++) {
         array[i] = i;
     }
 }
 
 void print_array_hex(uint8_t* array) {
-    for(int i = 0; i < 256; i++) {
+    for(int i = 0; i < MAX_ARRAY_SIZE; i++) {
         printf("%x\n", array[i]);
     }
 }
@@ -98,10 +100,11 @@ int open_file(char* filename) {
 /**
 *@brief write to file with file descriptor
 *@param fd filedescriptor of file to write to
+*@param byte_to_write byte to be written to output after encryption
 *@return STATUS SUCCESS or STATUS ERROR
  **/
-int write_to_file(int fd, char* byte_to_write) {
-    int bytes_written = write(fd, byte_to_write, 1);
+int write_byte_to_file(int fd, char* byte_to_write) {
+    int bytes_written = write(fd, byte_to_write, BYTE_AMOUNT_TO_READ);
     if(bytes_written == STATUS_ERROR) {
         close(fd);
         perror("Error while writing to file");
@@ -109,6 +112,16 @@ int write_to_file(int fd, char* byte_to_write) {
     }
     return STATUS_SUCCESS;
 }
+
+/**
+*@brief read one byte from file with file descriptor
+*@param fd filedescriptor of file to write to
+*@return STATUS SUCCESS or STATUS ERROR
+ **/
+int read_byte_from_file(int fd) {
+    return STATUS_SUCCESS;
+}
+
 
 /**
 *@brief close file descriptor
