@@ -6,32 +6,69 @@
 #include <unistd.h>      // read(), write(), close()
 #include <sys/types.h>   // types used in syscalls
 #include <sys/stat.h>    // mode constants for open()
+#include <getopt.h>
 
 #define STATUS_SUCCESS 0
 #define STATUS_ERROR -1
 #define BYTE_AMOUNT_TO_READ 1
 #define MAX_ARRAY_SIZE 256
 
-// Forward declarations
+// Forward declarations //
 int create_cyphertext(uint8_t* arrayS, char* filename_input, char* filename_output);
 void swap_elements(uint8_t* array, char* key, uint8_t key_length);
 void populate_array();
-void print_array_hex();
-// file operations
+void print_usage(char* argv[]);
+// file operations //
 int open_file(char* filename); 
 int write_byte_to_file(int fd, char* byte_to_write);
 int read_byte_from_file(int fd, char* byte_to_read);
 int close_file(int fd);
 
-
-int main() {
+/**
+ * @brief main function for RC4 encryption/decryption.
+ * @param argc Argument count
+ * @param argv Argument vector
+ * @return STATUS_SUCCESS or STATUS_ERROR
+ */
+int main(int argc, char* argv[]) {
     // vars declaration
-    char* test_key = "Key"; uint8_t key_length = strlen(test_key);
-    char* filename_input = "input.txt"; char* filename_output = "output.txt";
+    int8_t c;
+    char* key = NULL; uint8_t key_length;
+    char* filename_input = NULL; char* filename_output = NULL;
     uint8_t S[MAX_ARRAY_SIZE];
+
+    // getcommand line input with getopt
+    while((c = getopt(argc,argv, "k:i:o:")) != -1)
+    {
+        switch(c) {
+            case 'k':
+                key = optarg;
+                break;
+            case 'i':
+                filename_input = optarg;
+                break;
+            case 'o':
+                filename_output = optarg;
+                break;    
+            case '?':
+                printf("Unknown Option %c.\n", c);
+                break;
+            default:
+                return STATUS_ERROR;
+        }
+    }
+    if(filename_input == NULL || filename_output == NULL || key == NULL) {
+        printf("Required arguments are missing!\n");
+        print_usage(argv);
+        return STATUS_ERROR;
+    }
+
     // encryption/decryption
+    if(key != NULL) {
+        key_length = strlen(key);
+    }
     populate_array(S);
-    swap_elements(S,test_key,key_length);
+    swap_elements(S,key,key_length);
     create_cyphertext(S,filename_input,filename_output);
 
     return STATUS_SUCCESS;
@@ -39,8 +76,10 @@ int main() {
 
 /**
 *@brief encode input file byte by byte on basis of keystream
-*@param array array with shuffled numbers 
-*@return none
+*@param array array with shuffled numbers
+*@param filename_input pointer to input file
+*@param filename_output pointer to output file
+*@return STATUS_SUCCESS or STATUS_ERROR
  **/
 int create_cyphertext(uint8_t* arrayS, char* filename_input, char* filename_output) {
     //open files to read and write to
@@ -74,8 +113,6 @@ int create_cyphertext(uint8_t* arrayS, char* filename_input, char* filename_outp
         write_byte_to_file(outputfile_fd,encrypted_byte_ptr);
     }
 
-
-
 }
 
 /**
@@ -102,12 +139,6 @@ void swap_elements(uint8_t* array, char* key, uint8_t key_length) {
 void populate_array(uint8_t* array) {
     for(int i = 0; i < MAX_ARRAY_SIZE; i++) {
         array[i] = i;
-    }
-}
-
-void print_array_hex(uint8_t* array) {
-    for(int i = 0; i < MAX_ARRAY_SIZE; i++) {
-        printf("%x\n", array[i]);
     }
 }
 
@@ -169,4 +200,17 @@ int close_file(int fd) {
         return STATUS_ERROR;
     }
     return STATUS_SUCCESS;
+}
+
+/**
+*@brief print usage instructions to the user
+*@param argv function name
+*@return none
+ **/
+void print_usage(char* argv[]){
+    printf("\n");
+    printf("Usage: %s -k -i -o\n", argv[0]);
+    printf("\t -k  -  supply key value to be used for encryption - Format: key\n");
+    printf("\t -i  -  path to input file - Format: input.txt\n");
+    printf("\t -o  -  path to output file (should be empty) - Format: output.txt\n");
 }
