@@ -13,7 +13,7 @@
 #define MAX_ARRAY_SIZE 256
 
 // Forward declarations
-void create_cyphertext(uint8_t* array, char* filename_input, char* filename_output);
+int create_cyphertext(uint8_t* arrayS, char* filename_input, char* filename_output);
 void swap_elements(uint8_t* array, char* key, uint8_t key_length);
 void populate_array();
 void print_array_hex();
@@ -25,23 +25,14 @@ int close_file(int fd);
 
 
 int main() {
+    // vars declaration
     char* test_key = "Key"; uint8_t key_length = strlen(test_key);
-    char* filename_input = "input.txt"; char* filename_output = "output.txt"; char testbyte = 'p'; char* testbyte_ptr = &testbyte;
+    char* filename_input = "input.txt"; char* filename_output = "output.txt";
     uint8_t S[MAX_ARRAY_SIZE];
+    // encryption/decryption
     populate_array(S);
     swap_elements(S,test_key,key_length);
-
-    // test file operations
-    int inputfile_fd = open_file(filename_input);
-    int outputfile_fd = open_file(filename_output);
-    read_byte_from_file(inputfile_fd, testbyte_ptr);
-    write_byte_to_file(outputfile_fd, testbyte_ptr);
-    read_byte_from_file(inputfile_fd, testbyte_ptr);
-    write_byte_to_file(outputfile_fd, testbyte_ptr);
-    read_byte_from_file(inputfile_fd, testbyte_ptr);
-    write_byte_to_file(outputfile_fd, testbyte_ptr);
-    close_file(inputfile_fd);
-    close_file(outputfile_fd);
+    create_cyphertext(S,filename_input,filename_output);
 
     return STATUS_SUCCESS;
 }
@@ -51,8 +42,39 @@ int main() {
 *@param array array with shuffled numbers 
 *@return none
  **/
-void create_cyphertext(uint8_t* array, char* filename_input, char* filename_output) {
-    open_file(filename_input);
+int create_cyphertext(uint8_t* arrayS, char* filename_input, char* filename_output) {
+    //open files to read and write to
+    int inputfile_fd = open_file(filename_input);
+    int outputfile_fd = open_file(filename_output);
+    int i = 0; int j = 0; uint8_t K = 0;
+    char encrypted_byte; char* encrypted_byte_ptr = &encrypted_byte;
+    char read_byte; char* read_byte_ptr = &read_byte;
+
+    while(1) {
+        int read_status = read_byte_from_file(inputfile_fd, read_byte_ptr);
+        if(read_status == STATUS_ERROR) {
+            printf("Error reading byte from file. Encryption terminated!\n");
+            return STATUS_ERROR;
+        }
+        if(read_status == 0) {
+            printf("End of file reached.\n");
+            return STATUS_SUCCESS;
+        }
+        // further scrambling of state
+        i = (i+1) % MAX_ARRAY_SIZE;
+        j = (j+arrayS[i]) % MAX_ARRAY_SIZE;
+        // swap values
+        uint8_t temp = arrayS[i];
+        arrayS[i] = arrayS[j];
+        arrayS[j] = temp;
+        // chose K to XOR the input byte with
+        K = arrayS[(arrayS[i] + arrayS[j]) % MAX_ARRAY_SIZE];
+        encrypted_byte = K ^ read_byte;
+        
+        write_byte_to_file(outputfile_fd,encrypted_byte_ptr);
+    }
+
+
 
 }
 
