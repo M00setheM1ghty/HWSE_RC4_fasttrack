@@ -214,6 +214,6 @@ void print_usage(char* argv[]){
     printf("\n");
     printf("Usage: %s -k -i -o\n", argv[0]);
     printf("\t -k  -  key value to be used for encryption - Format: key\n");
-    printf("\t -i  -  input file name - Format: input.txt (if in root like main.c)\n");
-    printf("\t -o  -  output file name (should be empty) - Format: output.txt (if in root like main.c)\n");
+    printf("\t -i  -  input file name - Format: input.txt\n");
+    printf("\t -o  -  output file name (should be empty) - Format: output.txt\n");
 }
