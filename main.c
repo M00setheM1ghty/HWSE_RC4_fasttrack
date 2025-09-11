@@ -17,19 +17,22 @@ void swap_elements(uint8_t* array, char* key, uint8_t key_length);
 void populate_array();
 void print_array_hex();
 // file operations
-int open_file(const char* filename); 
+int open_file(char* filename); 
 int write_to_file(int fd, char* byte_to_write);
 int close_file(int fd);
 
 
 int main() {
     char* test_key = "Key"; uint8_t key_length = strlen(test_key);
-    char* filename_input = "input.txt"; char* filename_output = "output.txt";
+    char* filename_input = "input.txt"; char* filename_output = "output.txt"; char testbyte = 'A'; char* testbyte_ptr = &testbyte;
     uint8_t S[256];
     populate_array(S);
     swap_elements(S,test_key,key_length);
-    open_file(filename_input);
 
+    // test file operations
+    int inputfile_fd = open_file(filename_input);
+    write_to_file(inputfile_fd, testbyte_ptr);
+    close_file(inputfile_fd);
 
     return STATUS_SUCCESS;
 }
@@ -82,8 +85,8 @@ void print_array_hex(uint8_t* array) {
 *@param filename name of file
 *@return file descriptor
  **/
-int open_file(const char* filename) {
-    int fd = open(filename, O_RDONLY);
+int open_file(char* filename) {
+    int fd = open(filename, O_RDWR);
     if(fd == STATUS_ERROR) {
         close(fd);
         printf("Error during file opening.\n");
@@ -101,7 +104,7 @@ int write_to_file(int fd, char* byte_to_write) {
     int bytes_written = write(fd, byte_to_write, 1);
     if(bytes_written == STATUS_ERROR) {
         close(fd);
-        printf("Error while writing to file.\n");
+        perror("Error while writing to file");
         return STATUS_ERROR;
     }
     return STATUS_SUCCESS;
@@ -115,7 +118,7 @@ int write_to_file(int fd, char* byte_to_write) {
 int close_file(int fd) {
     int is_closed = close(fd);
     if(is_closed == STATUS_ERROR) {
-        printf("Error during file closing.\n");
+        perror("Error during file closing");
         return STATUS_ERROR;
     }
     return STATUS_SUCCESS;
