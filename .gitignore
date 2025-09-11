@@ -1,0 +1,6 @@
+*.odt
+*.exe
+*.odt#
+fasttrack
+Doxyfile
+*.txt
