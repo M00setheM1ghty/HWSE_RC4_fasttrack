@@ -1,9 +1,10 @@
 *.odt
 *.exe
 *.odt#
-fasttrack
-Doxyfile
+RC4
 *.txt
 *.json
 *.vscode
 main
+/html
+/latex

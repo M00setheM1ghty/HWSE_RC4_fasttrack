@@ -38,7 +38,7 @@ int main(int argc, char* argv[]) {
     uint8_t S[MAX_ARRAY_SIZE];
 
     // getcommand line input with getopt
-    while((c = getopt(argc,argv, "k:i:o:")) != -1)
+    while((c = getopt(argc,argv, "k:i:o:h")) != -1)
     {
         switch(c) {
             case 'k':
@@ -49,7 +49,10 @@ int main(int argc, char* argv[]) {
                 break;
             case 'o':
                 filename_output = optarg;
-                break;    
+                break;
+            case 'h':
+                print_usage(argv);
+                return STATUS_ERROR;    
             case '?':
                 printf("Unknown Option %c.\n", c);
                 break;
@@ -210,7 +213,7 @@ int close_file(int fd) {
 void print_usage(char* argv[]){
     printf("\n");
     printf("Usage: %s -k -i -o\n", argv[0]);
-    printf("\t -k  -  supply key value to be used for encryption - Format: key\n");
-    printf("\t -i  -  path to input file - Format: input.txt\n");
-    printf("\t -o  -  path to output file (should be empty) - Format: output.txt\n");
+    printf("\t -k  -  key value to be used for encryption - Format: key\n");
+    printf("\t -i  -  input file name - Format: input.txt (if in root like main.c)\n");
+    printf("\t -o  -  output file name (should be empty) - Format: output.txt (if in root like main.c)\n");
 }
