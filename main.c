@@ -20,21 +20,28 @@ void print_array_hex();
 // file operations
 int open_file(char* filename); 
 int write_byte_to_file(int fd, char* byte_to_write);
-int read_byte_from_file(int fd);
+int read_byte_from_file(int fd, char* byte_to_read);
 int close_file(int fd);
 
 
 int main() {
     char* test_key = "Key"; uint8_t key_length = strlen(test_key);
-    char* filename_input = "input.txt"; char* filename_output = "output.txt"; char testbyte = 'A'; char* testbyte_ptr = &testbyte;
+    char* filename_input = "input.txt"; char* filename_output = "output.txt"; char testbyte = 'p'; char* testbyte_ptr = &testbyte;
     uint8_t S[MAX_ARRAY_SIZE];
     populate_array(S);
     swap_elements(S,test_key,key_length);
 
     // test file operations
     int inputfile_fd = open_file(filename_input);
-    write_byte_to_file(inputfile_fd, testbyte_ptr);
+    int outputfile_fd = open_file(filename_output);
+    read_byte_from_file(inputfile_fd, testbyte_ptr);
+    write_byte_to_file(outputfile_fd, testbyte_ptr);
+    read_byte_from_file(inputfile_fd, testbyte_ptr);
+    write_byte_to_file(outputfile_fd, testbyte_ptr);
+    read_byte_from_file(inputfile_fd, testbyte_ptr);
+    write_byte_to_file(outputfile_fd, testbyte_ptr);
     close_file(inputfile_fd);
+    close_file(outputfile_fd);
 
     return STATUS_SUCCESS;
 }
@@ -118,8 +125,13 @@ int write_byte_to_file(int fd, char* byte_to_write) {
 *@param fd filedescriptor of file to write to
 *@return STATUS SUCCESS or STATUS ERROR
  **/
-int read_byte_from_file(int fd) {
-    return STATUS_SUCCESS;
+int read_byte_from_file(int fd, char* byte_to_read) {
+    int bytes_read = read(fd,byte_to_read,BYTE_AMOUNT_TO_READ);
+    if(bytes_read == STATUS_ERROR) {
+        perror("Error reading from file");
+        return STATUS_ERROR;
+    }
+    return bytes_read;
 }
 
 
