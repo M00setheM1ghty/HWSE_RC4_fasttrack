@@ -5,6 +5,8 @@
 
 A simple implementation of the **RC4 stream cipher** for encryption and decryption of files using a given key.
 
+Github: https://github.com/M00setheM1ghty/HWSE_RC4_fasttrack
+
 ---
 
 ## 🛠️ Compilation
@@ -38,7 +40,7 @@ Usage: ./RC4 -k <key> -i <input_file> -o <output_file>
 * `-i` — Input file name (e.g., `input.txt`)
 * `-o` — Output file name (e.g., `output.txt`)
 
-> 📌 Files should be in the same directory as the program (like `main.c`), unless full paths are specified.
+> 📌 Files should be in the same directory as the program (like `main.c`)
 
 ### Notes
 

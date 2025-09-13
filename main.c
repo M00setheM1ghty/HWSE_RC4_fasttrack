@@ -16,7 +16,7 @@
 // Forward declarations //
 int create_cyphertext(uint8_t* arrayS, char* filename_input, char* filename_output);
 void swap_elements(uint8_t* array, char* key, uint8_t key_length);
-void populate_array();
+void populate_array(uint8_t* array);
 void print_usage(char* argv[]);
 // file operations //
 int open_file(char* filename); 
