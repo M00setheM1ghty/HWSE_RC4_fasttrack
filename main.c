@@ -15,8 +15,8 @@
 
 // Forward declarations //
 int create_cyphertext(uint8_t* arrayS, char* filename_input, char* filename_output);
-void swap_elements(uint8_t* array, char* key, uint8_t key_length);
-void populate_array(uint8_t* array);
+void swap_elements(uint8_t* arrayS, char* key, uint8_t key_length);
+void populate_array(uint8_t* arrayS);
 void print_usage(char* argv[]);
 // file operations //
 int open_file(char* filename); 
@@ -124,13 +124,13 @@ int create_cyphertext(uint8_t* arrayS, char* filename_input, char* filename_outp
 *@param key string with key value
 *@return none
  **/
-void swap_elements(uint8_t* array, char* key, uint8_t key_length) {
+void swap_elements(uint8_t* arrayS, char* key, uint8_t key_length) {
     uint8_t j = 0;
     for(int i = 0; i < MAX_ARRAY_SIZE; i++) {
-        j = (j + array[i] + key[i%key_length]) % MAX_ARRAY_SIZE;
-        uint8_t temp = array[i];
-        array[i] = array[j];
-        array[j] = temp;
+        j = (j + arrayS[i] + key[i%key_length]) % MAX_ARRAY_SIZE;
+        uint8_t temp = arrayS[i];
+        arrayS[i] = arrayS[j];
+        arrayS[j] = temp;
     }
 }
 
@@ -139,9 +139,9 @@ void swap_elements(uint8_t* array, char* key, uint8_t key_length) {
 *@param array empty array to populate 
 *@return none
  **/
-void populate_array(uint8_t* array) {
+void populate_array(uint8_t* arrayS) {
     for(int i = 0; i < MAX_ARRAY_SIZE; i++) {
-        array[i] = i;
+        arrayS[i] = i;
     }
 }
 

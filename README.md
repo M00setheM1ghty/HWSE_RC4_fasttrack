@@ -7,6 +7,11 @@ A simple implementation of the **RC4 stream cipher** for encryption and decrypti
 
 Github: https://github.com/M00setheM1ghty/HWSE_RC4_fasttrack
 
+Open Doxygen Documentation: 
+```bash
+xdg-open html/index.html
+```
+
 ---
 
 ## 🛠️ Compilation
@@ -66,6 +71,7 @@ Usage: ./RC4 -k <key> -i <input_file> -o <output_file>
 * The input and output text files must **exist beforehand** and be correctly prepared
 * The program **does not check**:
 
+  * Whether the files exist
   * Whether the input file is empty
   * Whether the output file is writable or non-empty
 
@@ -94,14 +100,26 @@ Usage: ./RC4 -k <key> -i <input_file> -o <output_file>
 
 ### 🔒 Encrypt
 
+* Encrypt the input.txt file and save the output to output.txt:
 ```bash
-./RC4 -k mykey -i input.txt -o encrypted.txt
+./RC4 -k mykey -i input.txt -o output.txt
 ```
+
+### Copy Content
+
+* empty input file,copy output to input,empty the output file
+```bash
+> input.txt
+cat output.txt > input.txt 
+> output.txt
+```
+* Make sure to save the output and input files. 
+* Do NOT copy manually as this may copy unwanted characters -> decrypt will not work correctly
 
 ### 🔓 Decrypt
 
 ```bash
-./RC4 -k mykey -i encrypted.txt -o output.txt
+./RC4 -k mykey -i input.txt -o output.txt
 ```
 
 If the same key is used, `output.txt` should match the original `input.txt`.
